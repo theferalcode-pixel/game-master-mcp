@@ -1,0 +1,11 @@
+{
+  "player_name": "Sam",
+  "agent_name": "Aria",
+  "theme": "hearth",
+  "port": 8777,
+  "host": "127.0.0.1",
+  "data_home": "",
+  "chat_url": "",
+  "chat_profile": "",
+  "chat_workspace": ""
+}

@@ -1,0 +1,6 @@
+__pycache__/
+.pytest_cache/
+config.json
+.gameroom.pid
+.gameroom.log
+.gameroom-chat.json

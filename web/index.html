@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>The Game Room</title>
+  <link rel="stylesheet" href="./gameroom.css?v=1">
+</head>
+<body class="room-page">
+  <main class="game-shell">
+    <header class="game-header">
+      <label class="theme-pick">Theme <select id="themePick"><option value="hearth">Hearth</option><option value="tide">Tide</option><option value="grove">Grove</option></select></label>
+      <div>
+        <p class="eyebrow">The Game Room</p>
+        <h1>Pull a box off the shelf</h1>
+        <p class="subtitle">A warm corner of the house. your AI sits at every table — the chat is right beside the board.</p>
+      </div>
+      <span class="lamp" aria-hidden="true"></span>
+    </header>
+
+    <section class="shelf-unit" aria-label="Game shelf">
+      <div class="shelf-row">
+        <a class="game-box box-tictactoe" href="./game.html?g=tic-tac-toe">
+          <span class="box-art" aria-hidden="true">
+            <svg viewBox="0 0 60 60"><g stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"><path d="M22 8v44M38 8v44M8 22h44M8 38h44"/><path d="M12 12l8 8M20 12l-8 8" opacity=".85"/><circle cx="30" cy="30" r="4.5" opacity=".85"/></g></svg>
+          </span>
+          <span class="box-label">
+            <strong>Tic-tac-toe</strong>
+            <em>A quick classic</em>
+          </span>
+        </a>
+        <a class="game-box box-connect4" href="./game.html?g=connect-four">
+          <span class="box-art" aria-hidden="true">
+            <svg viewBox="0 0 60 60"><g fill="currentColor"><circle cx="14" cy="46" r="5"/><circle cx="30" cy="46" r="5" opacity=".45"/><circle cx="46" cy="46" r="5"/><circle cx="14" cy="30" r="5" opacity=".45"/><circle cx="30" cy="30" r="5"/><circle cx="46" cy="30" r="5" opacity=".45"/><circle cx="14" cy="14" r="5"/><circle cx="30" cy="14" r="5" opacity=".45"/><circle cx="46" cy="14" r="5"/></g></svg>
+          </span>
+          <span class="box-label">
+            <strong>Connect Four</strong>
+            <em>Drop and line up</em>
+          </span>
+        </a>
+        <a class="game-box box-checkers" href="./game.html?g=checkers">
+          <span class="box-art" aria-hidden="true">
+            <svg viewBox="0 0 60 60"><g fill="currentColor"><rect x="8" y="8" width="11" height="11" opacity=".35"/><rect x="30" y="8" width="11" height="11" opacity=".35"/><rect x="19" y="19" width="11" height="11" opacity=".35"/><rect x="41" y="19" width="11" height="11" opacity=".35"/><rect x="8" y="30" width="11" height="11" opacity=".35"/><rect x="30" y="30" width="11" height="11" opacity=".35"/><rect x="19" y="41" width="11" height="11" opacity=".35"/><rect x="41" y="41" width="11" height="11" opacity=".35"/><circle cx="24.5" cy="24.5" r="4"/><circle cx="35.5" cy="35.5" r="4"/></g></svg>
+          </span>
+          <span class="box-label">
+            <strong>Checkers</strong>
+            <em>Jump and crown</em>
+          </span>
+        </a>
+      </div>
+      <div class="shelf-board" aria-hidden="true"></div>
+
+      <div class="shelf-row">
+        <a class="game-box box-backgammon" href="./game.html?g=backgammon">
+          <span class="box-art" aria-hidden="true">
+            <svg viewBox="0 0 60 60"><g fill="currentColor"><path d="M8 8l6 22 6-22z"/><path d="M24 8l6 22 6-22z" opacity=".45"/><path d="M40 8l6 22 6-22z"/><path d="M8 52l6-22 6 22z" opacity=".45"/><path d="M24 52l6-22 6 22z"/><path d="M40 52l6-22 6 22z" opacity=".45"/></g></svg>
+          </span>
+          <span class="box-label">
+            <strong>Backgammon</strong>
+            <em>Race for home</em>
+          </span>
+        </a>
+        <a class="game-box box-chess" href="./game.html?g=chess">
+          <span class="box-art" aria-hidden="true">
+            <svg viewBox="0 0 60 60"><g fill="currentColor"><path d="M30 8c-2 5-6 8-6 12 0 3 2 5 2 5h8s2-2 2-5c0-4-4-7-6-12z"/><path d="M25 27h10l2 14h-14z" opacity=".8"/><path d="M20 44h20v6h-20z"/><circle cx="30" cy="7" r="3"/></g></svg>
+          </span>
+          <span class="box-label">
+            <strong>Chess</strong>
+            <em>The royal game</em>
+          </span>
+        </a>
+        <a class="game-box box-battleship" href="./game.html?g=battleship">
+          <span class="box-art" aria-hidden="true">
+            <svg viewBox="0 0 60 60"><g fill="currentColor"><path d="M8 40h44l-6 10h-32z"/><path d="M22 32h16v8h-16z" opacity=".8"/><path d="M27 20h6v12h-6z" opacity=".7"/><path d="M4 46c3 2 5 2 8 0" stroke="currentColor" stroke-width="2.4" fill="none" opacity=".6"/><path d="M48 46c3 2 5 2 8 0" stroke="currentColor" stroke-width="2.4" fill="none" opacity=".6"/></g></svg>
+          </span>
+          <span class="box-label">
+            <strong>Battleship</strong>
+            <em>Hidden fleets</em>
+          </span>
+        </a>
+      </div>
+      <div class="shelf-board" aria-hidden="true"></div>
+
+      <div class="shelf-row shelf-row--decor" aria-hidden="true">
+        <span class="decor decor-candle"><span class="flame"></span></span>
+        <span class="decor decor-dice"><span class="die">⚄</span><span class="die die--tilt">⚂</span></span>
+        <span class="decor decor-trophy"><span class="trophy">🏆</span></span>
+        <span class="decor decor-plant"><span class="leaf"></span><span class="leaf leaf--b"></span><span class="leaf leaf--c"></span></span>
+        <span class="decor decor-cards"><span class="card"></span><span class="card card--b"></span></span>
+      </div>
+      <div class="shelf-board" aria-hidden="true"></div>
+    </section>
+
+    <section class="records-card" aria-labelledby="recordsTitle">
+      <div class="board-heading">
+        <div>
+          <p class="eyebrow">The ledger</p>
+          <h2 id="recordsTitle">House records</h2>
+        </div>
+        <span class="state-badge" id="recordsState">reading the ledger</span>
+      </div>
+      <div class="records-stats" id="recordsStats"></div>
+      <div class="records-split">
+        <div>
+          <h3 class="records-subhead">Standings by game</h3>
+          <table class="records-table" id="recordsTable" aria-label="Wins, losses, and draws by game"></table>
+        </div>
+        <div>
+          <h3 class="records-subhead">Matches on the wall</h3>
+          <ul class="records-list" id="recordsList"></ul>
+        </div>
+      </div>
+    </section>
+
+    <p class="room-note">Every table is real: the board talks to the local game master, the same one your AI plays through its tools. Finished games land in the ledger on their own; your AI supplies the titles.</p>
+  </main>
+  <script src="./room-config.js?v=1"></script>
+  <script src="./lobby.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-store">
+  <title>The Game Room — Table</title>
+  <link rel="stylesheet" href="./gameroom.css?v=1">
+</head>
+<body class="table-page">
+  <main class="game-shell">
+    <header class="game-header">
+      <a class="back" href="./index.html">← The Game Room</a>
+      <div>
+        <p class="eyebrow">The Game Room</p>
+        <h1 id="gameTitle">Setting the table</h1>
+        <p class="subtitle" id="gameSubtitle">A real local table, kept honest by the game master.</p>
+      </div>
+      <button type="button" class="new-game" id="newGame">New game</button>
+    </header>
+
+    <section class="table-layout" aria-live="polite">
+      <section class="board-card" aria-labelledby="boardTitle">
+        <div class="board-heading">
+          <div>
+            <p class="eyebrow">Table state</p>
+            <h2 id="boardTitle">Loading the board</h2>
+          </div>
+          <span class="state-badge" id="gameState">checking local game master</span>
+        </div>
+        <p class="turn-note" id="turnNote">The board is being read from the local game master.</p>
+        <div class="board-actions" id="boardActions" hidden></div>
+        <div class="board-area" id="board" aria-label="Game board"></div>
+        <p class="error" id="gameError" role="alert" hidden></p>
+      </section>
+
+      <aside class="side-stack">
+        <section class="chat-card" aria-label="Table talk">
+          <div class="board-heading">
+            <div>
+              <p class="eyebrow">Table talk</p>
+              <h2 id="chatTitle">The other seat</h2>
+            </div>
+            <span class="state-badge" id="chatState">finding the chat</span>
+          </div>
+          <div class="chat-log" id="chatLog" aria-live="polite"></div>
+          <form class="chat-composer" id="chatForm">
+            <textarea id="chatInput" rows="2" placeholder="Say something — like “your move.”" aria-label="Message to Agent"></textarea>
+            <button type="submit" id="chatSend">Send</button>
+          </form>
+        </section>
+
+        <aside class="rules-card">
+          <p class="eyebrow">How it works</p>
+          <h2 id="rulesTitle">Nothing performs a move for you.</h2>
+          <div id="rulesBody"></div>
+          <dl id="rulesFacts"></dl>
+        </aside>
+      </aside>
+    </section>
+  </main>
+  <script src="./room-config.js?v=1"></script>
+  <script src="./chat-panel.js?v=1"></script>
+  <script src="./game.js?v=1"></script>
+</body>
+</html>
