@@ -4,6 +4,7 @@
 tiny local game server keeps the actual state, enforces the actual rules, and
 lets both of you make real moves: your AI through [MCP](https://modelcontextprotocol.io)
 tools, you in conversation or in a cozy little web Game Room.
+
 <img width="618" height="719" alt="Screenshot From 2026-07-19 13-52-46" src="https://github.com/user-attachments/assets/fa0bbe4d-45c9-4e0e-b5e5-6b159bb5e473" />
 
 Six games, complete rules, no honor system:
