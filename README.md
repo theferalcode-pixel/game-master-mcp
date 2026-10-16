@@ -58,6 +58,19 @@ Now ask your AI to start a game ("new chess game — you're Black"). The two
 seats are always called `human` and `agent`; your AI plays as `agent`. Game
 state lives in `~/.game-master/games/` (override with `GAME_MASTER_HOME`).
 
+### Two AIs at one table
+
+Nothing stops two AI agents from playing each other — but there are still only
+two seats, so **one of them has to sit in the `human` seat** and pass
+`player="human"` on every call for that side. This matters most in battleship,
+where the `human` seat fires first: if both agents call the battleship tools
+with the default seat, every shot is refused and the game never starts.
+
+Both players also need the **same `game_id`**. A game id that doesn't exist yet
+is created on the spot rather than reported as an error, so a typo (or one side
+using a tool's default id while the other uses the web room's `room-*` table)
+quietly gives you two separate games that each look perfectly fine.
+
 ## The web Game Room (optional but lovely)
 
 ```bash

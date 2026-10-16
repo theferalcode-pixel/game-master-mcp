@@ -659,6 +659,7 @@ class TestBattleshipLogic:
 
         wrong = game_master.battleship_fire(game_id="harbor", player="human", coordinate="A1")
         assert wrong["error"] == "It is agent's turn, not human's."
+        assert "'human' seat" not in wrong["error"]
 
         game_master.battleship_fire(game_id="harbor", player="agent", coordinate="J10")
         hit = game_master.battleship_fire(game_id="harbor", player="human", coordinate=name(ship_cell))
@@ -667,6 +668,19 @@ class TestBattleshipLogic:
         game_master.battleship_fire(game_id="harbor", player="agent", coordinate="J9")
         repeat = game_master.battleship_fire(game_id="harbor", player="human", coordinate=name(ship_cell))
         assert "already fired" in repeat["error"]
+
+    def test_agent_seat_refusal_explains_the_human_seat(self):
+        import game_master
+
+        game_master.battleship_new_game(game_id="harbor")
+        stuck = game_master.battleship_fire(game_id="harbor", player="agent", coordinate="A1")
+        assert stuck["error"].startswith("It is human's turn, not agent's.")
+        assert "player='human'" in stuck["error"]
+        assert stuck["last_move"] is None
+
+        opened = game_master.battleship_fire(game_id="harbor", player="human", coordinate="A1")
+        assert opened["error"] is None
+        assert opened["turn"] == "agent"
 
     def test_sinking_the_last_ship_wins_and_is_recorded(self):
         import game_master

@@ -1762,6 +1762,12 @@ def battleship_fire(
         return _battleship_view(state, player)
     if player != state["turn"]:
         state["error"] = f"It is {state['turn']}'s turn, not {player}'s."
+        if not state["moves"] and player == "agent":
+            state["error"] += (
+                " The opening shot belongs to the 'human' seat. If two AI agents are "
+                "playing each other, one of you has to sit in that seat: pass "
+                "player='human' on every battleship call for that side."
+            )
         return _battleship_view(state, player)
 
     try:
@@ -1936,7 +1942,11 @@ def create_mcp_server() -> "FastMCP":
             "Connect Four, checkers, backgammon, chess (the human is White), "
             "and battleship (each player sees only their own redacted view — "
             "no peeking). You always play as 'agent'; the human plays as "
-            "'human'. The bundled web Game Room plays at dedicated tables named "
+            "'human'. If your opponent is another AI rather than a person, one "
+            "of you must take the 'human' seat — pass player='human' on every "
+            "call for that side — and both of you must use the same game_id: a "
+            "mismatched id quietly starts a separate game instead of failing. "
+            "The bundled web Game Room plays at dedicated tables named "
             "room-tictactoe, room-connect4, room-checkers, room-backgammon, "
             "room-chess, and room-battleship. Finished games land in the house "
             "ledger automatically; when one does, the result includes a "
@@ -2145,8 +2155,13 @@ def create_mcp_server() -> "FastMCP":
     def battleship_new(game_id: str = "harbor") -> str:
         """Start a battleship game with two hidden, randomly placed fleets.
 
+        The 'human' seat fires first. Playing another AI instead of a person?
+        One of you must take the 'human' seat on every battleship call.
+
         Args:
-            game_id: Stable game identifier, such as harbor or cove.
+            game_id: Stable game identifier, such as harbor or cove. Both
+                players must use the same one; the web room plays at
+                room-battleship.
         """
         state = battleship_new_game(game_id=game_id)
         return _json_result(_battleship_view(state, "agent"))
@@ -2156,8 +2171,10 @@ def create_mcp_server() -> "FastMCP":
         """Return one player's redacted battleship view (own fleet + own shot results).
 
         Args:
-            game_id: Stable game identifier.
-            player: Whose private view to load. Only ask for your own.
+            game_id: Stable game identifier, shared with your opponent.
+            player: Whose private view to load. Only ask for your own — if you
+                are the side holding the 'human' seat, that means
+                player='human'.
         """
         return _json_result(battleship_get_view(game_id=game_id, player=player))
 
@@ -2166,8 +2183,10 @@ def create_mcp_server() -> "FastMCP":
         """Fire one shot at the enemy grid (A-J columns, rows 1-10, like B7).
 
         Args:
-            game_id: Stable game identifier.
-            player: human or agent.
+            game_id: Stable game identifier, shared with your opponent.
+            player: Your own seat, human or agent. The 'human' seat fires
+                first, so in an AI-vs-AI game one side passes player='human'
+                throughout.
             coordinate: Target square such as B7.
         """
         return _json_result(battleship_fire(game_id=game_id, player=player, coordinate=coordinate))
@@ -2177,8 +2196,8 @@ def create_mcp_server() -> "FastMCP":
         """Re-randomize your own fleet placement, allowed only before the first shot.
 
         Args:
-            game_id: Stable game identifier.
-            player: human or agent.
+            game_id: Stable game identifier, shared with your opponent.
+            player: Your own seat, human or agent.
         """
         return _json_result(battleship_shuffle(game_id=game_id, player=player))
 
