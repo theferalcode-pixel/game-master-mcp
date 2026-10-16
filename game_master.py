@@ -168,7 +168,7 @@ def submit_move(game_id: str = TABLE_TICTACTOE, player: str = "human", position:
     """Submit a move for Human or Agent.
 
     Args:
-        game_id: Stable game identifier. Defaults to porch.
+        game_id: Which table to play at; the default is the room's.
         player: human or agent.
         position: Board square 1-9, left-to-right/top-to-bottom.
     """
@@ -791,7 +791,7 @@ def connect4_drop(game_id: str = TABLE_CONNECT4, player: str = "human", column: 
     """Drop a checker into a column for Human or Agent.
 
     Args:
-        game_id: Stable game identifier. Defaults to den.
+        game_id: Which table to play at; the default is the room's.
         player: human or agent.
         column: Column 1-7, left to right.
     """
@@ -2032,7 +2032,7 @@ def create_mcp_server() -> "FastMCP":
         """Submit a tic-tac-toe move.
 
         Args:
-            game_id: Stable game identifier.
+            game_id: Which table to play at; the default is the room's.
             player: human or agent.
             position: Board square 1-9.
         """
@@ -2066,7 +2066,7 @@ def create_mcp_server() -> "FastMCP":
         """Roll backgammon dice for the current player.
 
         Args:
-            game_id: Stable game identifier.
+            game_id: Which table to play at; the default is the room's.
             player: human or agent.
             die1: Optional explicit first die for demos/tests. Omit for random.
             die2: Optional explicit second die for demos/tests. Omit for random.
@@ -2085,7 +2085,7 @@ def create_mcp_server() -> "FastMCP":
         """Move one backgammon checker using an available die.
 
         Args:
-            game_id: Stable game identifier.
+            game_id: Which table to play at; the default is the room's.
             player: human or agent.
             from_point: Source point number 1-24.
             to_point: Destination point number 1-24.
@@ -2101,7 +2101,7 @@ def create_mcp_server() -> "FastMCP":
         """Enter a checker from the bar using an available die.
 
         Args:
-            game_id: Stable game identifier.
+            game_id: Which table to play at; the default is the room's.
             player: human or agent.
             to_point: Entry point. Human enters on 24-19, Agent on 1-6.
         """
@@ -2114,7 +2114,7 @@ def create_mcp_server() -> "FastMCP":
         """Bear a checker off once every checker is in the home board.
 
         Args:
-            game_id: Stable game identifier.
+            game_id: Which table to play at; the default is the room's.
             player: human or agent.
             from_point: Point to bear off from. Human's home is 1-6, Agent's is 19-24.
         """
@@ -2127,7 +2127,7 @@ def create_mcp_server() -> "FastMCP":
         """End the current backgammon turn and discard unused dice.
 
         Args:
-            game_id: Stable game identifier.
+            game_id: Which table to play at; the default is the room's.
             player: human or agent.
         """
         return _json_result(globals()["backgammon_end_turn"](game_id=game_id, player=player))
@@ -2155,7 +2155,7 @@ def create_mcp_server() -> "FastMCP":
         """Drop a Connect Four checker into a column.
 
         Args:
-            game_id: Stable game identifier.
+            game_id: Which table to play at; the default is the room's.
             player: human or agent.
             column: Column 1-7, left to right.
         """
@@ -2212,7 +2212,7 @@ def create_mcp_server() -> "FastMCP":
         Castle by moving the king two squares. Promotion is q, r, b, or n.
 
         Args:
-            game_id: Stable game identifier.
+            game_id: Which table to play at; the default is the room's.
             player: human or agent.
             from_square: Source square such as e2.
             to_square: Destination square such as e4.
@@ -2306,7 +2306,7 @@ def create_mcp_server() -> "FastMCP":
         """Move a checkers piece. Captures are mandatory; keep jumping while you can.
 
         Args:
-            game_id: Stable game identifier.
+            game_id: Which table to play at; the default is the room's.
             player: human or agent.
             from_square: Source square 1-64, left to right from the top row.
             to_square: Destination square 1-64.
