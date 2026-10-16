@@ -682,6 +682,25 @@ class TestBattleshipLogic:
         assert opened["error"] is None
         assert opened["turn"] == "agent"
 
+    def test_view_reports_both_sides_shot_counts(self):
+        import game_master
+
+        game_master.battleship_new_game(game_id="harbor")
+        opening = game_master.battleship_get_view(game_id="harbor", player="human")
+        assert opening["shots_fired"] == 0
+        assert opening["opponent_shots_fired"] == 0
+
+        game_master.battleship_fire(game_id="harbor", player="human", coordinate="A1")
+        game_master.battleship_fire(game_id="harbor", player="agent", coordinate="J10")
+
+        human = game_master.battleship_get_view(game_id="harbor", player="human")
+        agent = game_master.battleship_get_view(game_id="harbor", player="agent")
+        assert human["shots_fired"] == human["opponent_shots_fired"] == 1
+        assert agent["shots_fired"] == agent["opponent_shots_fired"] == 1
+        assert "Table harbor" in human["rendered_board"]
+        # it must stay a count, never a position
+        assert "fleets" not in human and "fleets" not in agent
+
     def test_sinking_the_last_ship_wins_and_is_recorded(self):
         import game_master
 
@@ -746,6 +765,46 @@ class TestHouseLedger:
 
         missing = game_master.gameroom_annotate(record_id="nope")
         assert missing["state"] == "error"
+
+
+def test_tool_defaults_land_at_the_rooms_tables(fake_server):
+    """Nobody should have to name a table: the tool defaults are the room's."""
+    import game_master
+
+    battle = json.loads(asyncio.run(fake_server._tool_manager.call_tool("battleship_new")))
+    assert battle["game_id"] == game_master.TABLE_BATTLESHIP
+    noughts = json.loads(asyncio.run(fake_server._tool_manager.call_tool("game_new")))
+    assert noughts["game_id"] == game_master.TABLE_TICTACTOE
+
+
+def test_starting_a_game_does_not_throw_away_one_in_progress(fake_server):
+    import game_master
+
+    call = fake_server._tool_manager.call_tool
+    asyncio.run(call("battleship_new"))
+    fired = json.loads(asyncio.run(call("battleship_fire_shot", {"player": "human", "coordinate": "A1"})))
+    assert fired["opponent_shots_fired"] == 0
+    assert fired["shots_fired"] == 1
+
+    resumed = json.loads(asyncio.run(call("battleship_new")))
+    assert resumed["error"] == game_master.RESUME_NOTE
+    assert resumed["opponent_shots_fired"] == 1  # the agent's view of that shot
+
+    dealt_again = json.loads(asyncio.run(call("battleship_new", {"reset": True})))
+    assert dealt_again["error"] is None
+    assert dealt_again["opponent_shots_fired"] == 0
+
+    # and the same protection on a game with an ordinary shared board
+    asyncio.run(call("game_new"))
+    asyncio.run(call("game_submit_move", {"player": "human", "position": 5}))
+    guarded = json.loads(asyncio.run(call("game_new")))
+    assert guarded["error"] == game_master.RESUME_NOTE
+    assert guarded["board"][4] == "X"
+    assert json.loads(asyncio.run(call("game_new", {"reset": True})))["board"][4] == ""
+
+    # an untouched table is nobody's game yet — re-dealing it is harmless
+    fresh = json.loads(asyncio.run(call("game_new")))
+    assert fresh["error"] is None
 
 
 def test_mcp_tools_expose_playable_games(fake_server):

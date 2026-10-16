@@ -58,10 +58,22 @@ def _games_dir() -> Path:
     return path
 
 
+# Every game has one default table, and it is the same table the web Game Room
+# plays at. That way a person can just say "let's play battleship" and their AI
+# sits down at the board already on their screen — nobody has to know a table
+# has a name. Pass an explicit game_id only to run a second, separate game.
+TABLE_TICTACTOE = "room-tictactoe"
+TABLE_CONNECT4 = "room-connect4"
+TABLE_CHECKERS = "room-checkers"
+TABLE_BACKGAMMON = "room-backgammon"
+TABLE_CHESS = "room-chess"
+TABLE_BATTLESHIP = "room-battleship"
+
+
 def _normalize_game_id(game_id: str) -> str:
-    game_id = (game_id or "porch").strip().lower()
+    game_id = (game_id or TABLE_TICTACTOE).strip().lower()
     game_id = re.sub(r"[^a-z0-9_.-]+", "-", game_id).strip("-._")
-    return game_id or "porch"
+    return game_id or TABLE_TICTACTOE
 
 
 def _game_path(game_id: str) -> Path:
@@ -94,7 +106,7 @@ def _save_game(state: dict[str, Any]) -> dict[str, Any]:
     return _with_view(state_to_write)
 
 
-def load_game(game_id: str = "porch") -> dict[str, Any]:
+def load_game(game_id: str = TABLE_TICTACTOE) -> dict[str, Any]:
     """Load an existing tic-tac-toe game, creating a fresh one if missing."""
     path = _game_path(game_id)
     if not path.exists():
@@ -108,7 +120,7 @@ def load_game(game_id: str = "porch") -> dict[str, Any]:
 
 
 def new_game(
-    game_id: str = "porch",
+    game_id: str = TABLE_TICTACTOE,
     human_mark: str = "X",
     agent_mark: str = "O",
 ) -> dict[str, Any]:
@@ -152,7 +164,7 @@ def _evaluate(state: dict[str, Any]) -> None:
         state["winning_line"] = None
 
 
-def submit_move(game_id: str = "porch", player: str = "human", position: int = 1) -> dict[str, Any]:
+def submit_move(game_id: str = TABLE_TICTACTOE, player: str = "human", position: int = 1) -> dict[str, Any]:
     """Submit a move for Human or Agent.
 
     Args:
@@ -285,7 +297,7 @@ def backgammon_save_game(state: dict[str, Any]) -> dict[str, Any]:
     return _with_backgammon_view(state_to_write)
 
 
-def backgammon_new_game(game_id: str = "back-porch") -> dict[str, Any]:
+def backgammon_new_game(game_id: str = TABLE_BACKGAMMON) -> dict[str, Any]:
     """Create or reset a minimal playable backgammon game."""
     state = {
         "game_id": _normalize_game_id(game_id),
@@ -305,7 +317,7 @@ def backgammon_new_game(game_id: str = "back-porch") -> dict[str, Any]:
     return backgammon_save_game(state)
 
 
-def backgammon_load_game(game_id: str = "back-porch") -> dict[str, Any]:
+def backgammon_load_game(game_id: str = TABLE_BACKGAMMON) -> dict[str, Any]:
     """Load an existing backgammon game, creating a fresh one if missing."""
     path = _backgammon_path(game_id)
     if not path.exists():
@@ -340,7 +352,7 @@ def _normalize_die(value: int | None) -> int:
 
 
 def backgammon_roll(
-    game_id: str = "back-porch",
+    game_id: str = TABLE_BACKGAMMON,
     player: str = "human",
     die1: int | None = None,
     die2: int | None = None,
@@ -398,7 +410,7 @@ def _opponent(player: str) -> str:
 
 
 def backgammon_move(
-    game_id: str = "back-porch",
+    game_id: str = TABLE_BACKGAMMON,
     player: str = "human",
     from_point: int = 24,
     to_point: int = 23,
@@ -524,7 +536,7 @@ def _backgammon_finish_move(state: dict[str, Any], player: str) -> dict[str, Any
 
 
 def backgammon_enter(
-    game_id: str = "back-porch",
+    game_id: str = TABLE_BACKGAMMON,
     player: str = "human",
     to_point: int = 24,
 ) -> dict[str, Any]:
@@ -591,7 +603,7 @@ def backgammon_enter(
 
 
 def backgammon_bear_off(
-    game_id: str = "back-porch",
+    game_id: str = TABLE_BACKGAMMON,
     player: str = "human",
     from_point: int = 1,
 ) -> dict[str, Any]:
@@ -663,7 +675,7 @@ def backgammon_bear_off(
     return _backgammon_finish_move(state, player)
 
 
-def backgammon_end_turn(game_id: str = "back-porch", player: str = "human") -> dict[str, Any]:
+def backgammon_end_turn(game_id: str = TABLE_BACKGAMMON, player: str = "human") -> dict[str, Any]:
     """End the current backgammon turn, discarding unused dice."""
     state = backgammon_load_game(game_id)
     state.pop("rendered_board", None)
@@ -718,7 +730,7 @@ def connect4_save_game(state: dict[str, Any]) -> dict[str, Any]:
     return _with_connect4_view(state_to_write)
 
 
-def connect4_new_game(game_id: str = "den") -> dict[str, Any]:
+def connect4_new_game(game_id: str = TABLE_CONNECT4) -> dict[str, Any]:
     """Create or reset a Connect Four game."""
     state = {
         "game_id": _normalize_game_id(game_id),
@@ -734,7 +746,7 @@ def connect4_new_game(game_id: str = "den") -> dict[str, Any]:
     return connect4_save_game(state)
 
 
-def connect4_load_game(game_id: str = "den") -> dict[str, Any]:
+def connect4_load_game(game_id: str = TABLE_CONNECT4) -> dict[str, Any]:
     """Load an existing Connect Four game, creating a fresh one if missing."""
     path = _connect4_path(game_id)
     if not path.exists():
@@ -775,7 +787,7 @@ def _connect4_evaluate(state: dict[str, Any]) -> None:
         state["winning_cells"] = None
 
 
-def connect4_drop(game_id: str = "den", player: str = "human", column: int = 1) -> dict[str, Any]:
+def connect4_drop(game_id: str = TABLE_CONNECT4, player: str = "human", column: int = 1) -> dict[str, Any]:
     """Drop a checker into a column for Human or Agent.
 
     Args:
@@ -909,7 +921,7 @@ def checkers_save_game(state: dict[str, Any]) -> dict[str, Any]:
     return _with_checkers_view(state_to_write)
 
 
-def checkers_new_game(game_id: str = "hearth") -> dict[str, Any]:
+def checkers_new_game(game_id: str = TABLE_CHECKERS) -> dict[str, Any]:
     """Create or reset a checkers game."""
     state = {
         "game_id": _normalize_game_id(game_id),
@@ -925,7 +937,7 @@ def checkers_new_game(game_id: str = "hearth") -> dict[str, Any]:
     return checkers_save_game(state)
 
 
-def checkers_load_game(game_id: str = "hearth") -> dict[str, Any]:
+def checkers_load_game(game_id: str = TABLE_CHECKERS) -> dict[str, Any]:
     """Load an existing checkers game, creating a fresh one if missing."""
     path = _checkers_path(game_id)
     if not path.exists():
@@ -995,7 +1007,7 @@ def _checkers_player_has_move(board: list[str], player: str) -> bool:
 
 
 def checkers_move(
-    game_id: str = "hearth",
+    game_id: str = TABLE_CHECKERS,
     player: str = "human",
     from_square: int = 1,
     to_square: int = 1,
@@ -1388,7 +1400,7 @@ def chess_save_game(state: dict[str, Any]) -> dict[str, Any]:
     return _with_chess_view(state_to_write)
 
 
-def chess_new_game(game_id: str = "study") -> dict[str, Any]:
+def chess_new_game(game_id: str = TABLE_CHESS) -> dict[str, Any]:
     """Create or reset a chess game. Human is White and moves first."""
     state = {
         "game_id": _normalize_game_id(game_id),
@@ -1413,7 +1425,7 @@ def chess_new_game(game_id: str = "study") -> dict[str, Any]:
     return chess_save_game(state)
 
 
-def chess_load_game(game_id: str = "study") -> dict[str, Any]:
+def chess_load_game(game_id: str = TABLE_CHESS) -> dict[str, Any]:
     """Load an existing chess game, creating a fresh one if missing."""
     path = _chess_path(game_id)
     if not path.exists():
@@ -1427,7 +1439,7 @@ def chess_load_game(game_id: str = "study") -> dict[str, Any]:
 
 
 def chess_submit_move(
-    game_id: str = "study",
+    game_id: str = TABLE_CHESS,
     player: str = "human",
     from_square: str = "e2",
     to_square: str = "e4",
@@ -1651,6 +1663,11 @@ def _battleship_view(state: dict[str, Any], player: str) -> dict[str, Any]:
         "enemy_ships_afloat": len(enemy_fleet) - len(enemy_sunk),
         "enemy_ships_sunk": enemy_sunk,
         "shots_fired": sum(1 for move in state["moves"] if move["player"] == player),
+        # Shot counts give away nothing about positions, and they are the one
+        # thing both sides can compare to see they are at the same table — in a
+        # game with no shared board, "we are in different games" and "nobody has
+        # fired yet" look identical without them.
+        "opponent_shots_fired": sum(1 for move in state["moves"] if move["player"] == opponent),
         "last_move": state["moves"][-1] if state["moves"] else None,
         "error": state.get("error"),
     }
@@ -1682,6 +1699,10 @@ def _render_battleship_view(view: dict[str, Any]) -> str:
         f"Ships afloat — yours: {view['your_ships_afloat']}, enemy: {view['enemy_ships_afloat']} | "
         f"turn: {view['turn']} | status: {view['status']}"
     )
+    lines.append(
+        f"Table {view['game_id']} — shots fired: you {view['shots_fired']}, "
+        f"opponent {view['opponent_shots_fired']}."
+    )
     return "\n".join(lines)
 
 
@@ -1691,7 +1712,7 @@ def battleship_save_game(state: dict[str, Any]) -> None:
     )
 
 
-def battleship_new_game(game_id: str = "harbor") -> dict[str, Any]:
+def battleship_new_game(game_id: str = TABLE_BATTLESHIP) -> dict[str, Any]:
     """Start a battleship game with two freshly hidden random fleets."""
     state = {
         "game_id": _normalize_game_id(game_id),
@@ -1719,7 +1740,7 @@ def _battleship_load(game_id: str) -> dict[str, Any]:
         return battleship_new_game(game_id=game_id)
 
 
-def battleship_get_view(game_id: str = "harbor", player: str = "human") -> dict[str, Any]:
+def battleship_get_view(game_id: str = TABLE_BATTLESHIP, player: str = "human") -> dict[str, Any]:
     """Load one player's redacted view of the game."""
     player = (player or "").strip().lower()
     if player not in PLAYERS:
@@ -1729,7 +1750,7 @@ def battleship_get_view(game_id: str = "harbor", player: str = "human") -> dict[
     return _battleship_view(state, player)
 
 
-def battleship_shuffle(game_id: str = "harbor", player: str = "human") -> dict[str, Any]:
+def battleship_shuffle(game_id: str = TABLE_BATTLESHIP, player: str = "human") -> dict[str, Any]:
     """Re-randomize your own fleet, allowed only before any shot is fired."""
     player = (player or "").strip().lower()
     if player not in PLAYERS:
@@ -1745,7 +1766,7 @@ def battleship_shuffle(game_id: str = "harbor", player: str = "human") -> dict[s
 
 
 def battleship_fire(
-    game_id: str = "harbor", player: str = "human", coordinate: str = "A1"
+    game_id: str = TABLE_BATTLESHIP, player: str = "human", coordinate: str = "A1"
 ) -> dict[str, Any]:
     """Fire one shot at the enemy grid. Turns alternate shot by shot."""
     player = (player or "").strip().lower()
@@ -1926,6 +1947,29 @@ def _json_result(state: dict[str, Any]) -> str:
     return json.dumps(state, indent=2, sort_keys=True)
 
 
+RESUME_NOTE = (
+    "A game is already under way at this table and this is where it stands — "
+    "nothing was reset. Carry on from here, or call again with reset=True to "
+    "abandon it and deal a fresh one."
+)
+
+
+def _game_under_way(path: Path, loader: Any, game_id: str) -> dict[str, Any] | None:
+    """Return the game being played at this table, or None if nothing is going on.
+
+    Dealing a fresh game over a live one throws it away without a word, which is
+    worst in battleship: both fleets are re-rolled, so each side is left holding
+    notes on ships that no longer exist. A table nobody has moved on yet is fair
+    game — it is the one in play we protect.
+    """
+    if not path.exists():
+        return None
+    state = loader(game_id)
+    if state.get("status") != "playing" or not state.get("moves"):
+        return None
+    return state
+
+
 def create_mcp_server() -> "FastMCP":
     """Create the Game Master MCP server."""
     if not _MCP_SERVER_AVAILABLE:
@@ -1944,11 +1988,14 @@ def create_mcp_server() -> "FastMCP":
             "no peeking). You always play as 'agent'; the human plays as "
             "'human'. If your opponent is another AI rather than a person, one "
             "of you must take the 'human' seat — pass player='human' on every "
-            "call for that side — and both of you must use the same game_id: a "
-            "mismatched id quietly starts a separate game instead of failing. "
-            "The bundled web Game Room plays at dedicated tables named "
-            "room-tictactoe, room-connect4, room-checkers, room-backgammon, "
-            "room-chess, and room-battleship. Finished games land in the house "
+            "call for that side. Every tool already defaults to the table the "
+            "bundled web Game Room shows (room-tictactoe, room-connect4, "
+            "room-checkers, room-backgammon, room-chess, room-battleship), so "
+            "you and the person you are playing sit at the same board without "
+            "either of you naming it; pass a game_id only to run a second, "
+            "separate game. Starting a game will not throw away one already in "
+            "progress: you get that game back instead, and reset=True is there "
+            "if you truly mean to abandon it. Finished games land in the house "
             "ledger automatically; when one does, the result includes a "
             "record_id — use gameroom_annotate_match to give the match a title "
             "and a postgame note worthy of the wall."
@@ -1956,23 +2003,32 @@ def create_mcp_server() -> "FastMCP":
     )
 
     @mcp.tool()
-    def game_new(game_id: str = "porch", human_mark: str = "X", agent_mark: str = "O") -> str:
-        """Start or reset a tic-tac-toe game.
+    def game_new(
+        game_id: str = TABLE_TICTACTOE,
+        human_mark: str = "X",
+        agent_mark: str = "O",
+        reset: bool = False,
+    ) -> str:
+        """Start a tic-tac-toe game.
 
         Args:
-            game_id: Stable game identifier, such as porch or kitchen-table.
+            game_id: Which table to play at; the default is the room's.
             human_mark: Human's board mark. Defaults to X.
             agent_mark: Agent's board mark. Defaults to O.
+            reset: Throw away a game already in progress here. Off by default.
         """
+        live = _game_under_way(_game_path(game_id), load_game, game_id)
+        if live is not None and not reset:
+            return _json_result({**live, "error": RESUME_NOTE})
         return _json_result(new_game(game_id=game_id, human_mark=human_mark, agent_mark=agent_mark))
 
     @mcp.tool()
-    def game_get_state(game_id: str = "porch") -> str:
+    def game_get_state(game_id: str = TABLE_TICTACTOE) -> str:
         """Return the current tic-tac-toe game state."""
         return _json_result(load_game(game_id=game_id))
 
     @mcp.tool()
-    def game_submit_move(game_id: str = "porch", player: str = "human", position: int = 1) -> str:
+    def game_submit_move(game_id: str = TABLE_TICTACTOE, player: str = "human", position: int = 1) -> str:
         """Submit a tic-tac-toe move.
 
         Args:
@@ -1983,22 +2039,26 @@ def create_mcp_server() -> "FastMCP":
         return _json_result(submit_move(game_id=game_id, player=player, position=position))
 
     @mcp.tool()
-    def backgammon_new(game_id: str = "back-porch") -> str:
-        """Start or reset a backgammon game.
+    def backgammon_new(game_id: str = TABLE_BACKGAMMON, reset: bool = False) -> str:
+        """Start a backgammon game.
 
         Args:
-            game_id: Stable game identifier, such as back-porch or sunny-table.
+            game_id: Which table to play at; the default is the room's.
+            reset: Throw away a game already in progress here. Off by default.
         """
+        live = _game_under_way(_backgammon_path(game_id), backgammon_load_game, game_id)
+        if live is not None and not reset:
+            return _json_result({**live, "error": RESUME_NOTE})
         return _json_result(backgammon_new_game(game_id=game_id))
 
     @mcp.tool()
-    def backgammon_get_state(game_id: str = "back-porch") -> str:
+    def backgammon_get_state(game_id: str = TABLE_BACKGAMMON) -> str:
         """Return the current backgammon game state."""
         return _json_result(backgammon_load_game(game_id=game_id))
 
     @mcp.tool()
     def backgammon_roll(
-        game_id: str = "back-porch",
+        game_id: str = TABLE_BACKGAMMON,
         player: str = "human",
         die1: int | None = None,
         die2: int | None = None,
@@ -2017,7 +2077,7 @@ def create_mcp_server() -> "FastMCP":
 
     @mcp.tool()
     def backgammon_move(
-        game_id: str = "back-porch",
+        game_id: str = TABLE_BACKGAMMON,
         player: str = "human",
         from_point: int = 24,
         to_point: int = 23,
@@ -2037,7 +2097,7 @@ def create_mcp_server() -> "FastMCP":
         )
 
     @mcp.tool()
-    def backgammon_enter(game_id: str = "back-porch", player: str = "human", to_point: int = 24) -> str:
+    def backgammon_enter(game_id: str = TABLE_BACKGAMMON, player: str = "human", to_point: int = 24) -> str:
         """Enter a checker from the bar using an available die.
 
         Args:
@@ -2050,7 +2110,7 @@ def create_mcp_server() -> "FastMCP":
         )
 
     @mcp.tool()
-    def backgammon_bear_off(game_id: str = "back-porch", player: str = "human", from_point: int = 1) -> str:
+    def backgammon_bear_off(game_id: str = TABLE_BACKGAMMON, player: str = "human", from_point: int = 1) -> str:
         """Bear a checker off once every checker is in the home board.
 
         Args:
@@ -2063,7 +2123,7 @@ def create_mcp_server() -> "FastMCP":
         )
 
     @mcp.tool()
-    def backgammon_end_turn(game_id: str = "back-porch", player: str = "human") -> str:
+    def backgammon_end_turn(game_id: str = TABLE_BACKGAMMON, player: str = "human") -> str:
         """End the current backgammon turn and discard unused dice.
 
         Args:
@@ -2073,21 +2133,25 @@ def create_mcp_server() -> "FastMCP":
         return _json_result(globals()["backgammon_end_turn"](game_id=game_id, player=player))
 
     @mcp.tool()
-    def connect4_new(game_id: str = "den") -> str:
-        """Start or reset a Connect Four game.
+    def connect4_new(game_id: str = TABLE_CONNECT4, reset: bool = False) -> str:
+        """Start a Connect Four game.
 
         Args:
-            game_id: Stable game identifier, such as den or window-seat.
+            game_id: Which table to play at; the default is the room's.
+            reset: Throw away a game already in progress here. Off by default.
         """
+        live = _game_under_way(_connect4_path(game_id), connect4_load_game, game_id)
+        if live is not None and not reset:
+            return _json_result({**live, "error": RESUME_NOTE})
         return _json_result(connect4_new_game(game_id=game_id))
 
     @mcp.tool()
-    def connect4_get_state(game_id: str = "den") -> str:
+    def connect4_get_state(game_id: str = TABLE_CONNECT4) -> str:
         """Return the current Connect Four game state."""
         return _json_result(connect4_load_game(game_id=game_id))
 
     @mcp.tool()
-    def connect4_drop(game_id: str = "den", player: str = "human", column: int = 1) -> str:
+    def connect4_drop(game_id: str = TABLE_CONNECT4, player: str = "human", column: int = 1) -> str:
         """Drop a Connect Four checker into a column.
 
         Args:
@@ -2100,36 +2164,44 @@ def create_mcp_server() -> "FastMCP":
         )
 
     @mcp.tool()
-    def checkers_new(game_id: str = "hearth") -> str:
-        """Start or reset a checkers game.
+    def checkers_new(game_id: str = TABLE_CHECKERS, reset: bool = False) -> str:
+        """Start a checkers game.
 
         Args:
-            game_id: Stable game identifier, such as hearth or fireside.
+            game_id: Which table to play at; the default is the room's.
+            reset: Throw away a game already in progress here. Off by default.
         """
+        live = _game_under_way(_checkers_path(game_id), checkers_load_game, game_id)
+        if live is not None and not reset:
+            return _json_result({**live, "error": RESUME_NOTE})
         return _json_result(checkers_new_game(game_id=game_id))
 
     @mcp.tool()
-    def checkers_get_state(game_id: str = "hearth") -> str:
+    def checkers_get_state(game_id: str = TABLE_CHECKERS) -> str:
         """Return the current checkers game state."""
         return _json_result(checkers_load_game(game_id=game_id))
 
     @mcp.tool()
-    def chess_new(game_id: str = "study") -> str:
-        """Start or reset a chess game. Human is White and moves first.
+    def chess_new(game_id: str = TABLE_CHESS, reset: bool = False) -> str:
+        """Start a chess game. Human is White and moves first.
 
         Args:
-            game_id: Stable game identifier, such as study or bay-window.
+            game_id: Which table to play at; the default is the room's.
+            reset: Throw away a game already in progress here. Off by default.
         """
+        live = _game_under_way(_chess_path(game_id), chess_load_game, game_id)
+        if live is not None and not reset:
+            return _json_result({**live, "error": RESUME_NOTE})
         return _json_result(chess_new_game(game_id=game_id))
 
     @mcp.tool()
-    def chess_get_state(game_id: str = "study") -> str:
+    def chess_get_state(game_id: str = TABLE_CHESS) -> str:
         """Return the current chess state, including all legal moves for the side to move."""
         return _json_result(chess_load_game(game_id=game_id))
 
     @mcp.tool()
     def chess_move(
-        game_id: str = "study",
+        game_id: str = TABLE_CHESS,
         player: str = "human",
         from_square: str = "e2",
         to_square: str = "e4",
@@ -2152,26 +2224,33 @@ def create_mcp_server() -> "FastMCP":
         ))
 
     @mcp.tool()
-    def battleship_new(game_id: str = "harbor") -> str:
+    def battleship_new(game_id: str = TABLE_BATTLESHIP, reset: bool = False) -> str:
         """Start a battleship game with two hidden, randomly placed fleets.
 
         The 'human' seat fires first. Playing another AI instead of a person?
         One of you must take the 'human' seat on every battleship call.
 
         Args:
-            game_id: Stable game identifier, such as harbor or cove. Both
-                players must use the same one; the web room plays at
-                room-battleship.
+            game_id: Which table to play at. The default is the table the
+                web Game Room shows, which is almost always what you
+                want. Only name another to run a separate game.
+            reset: Throw away a battle already in progress here, re-rolling
+                both fleets. Off by default.
         """
+        live = _game_under_way(_battleship_path(game_id), _battleship_load, game_id)
+        if live is not None and not reset:
+            view = _battleship_view(live, "agent")
+            view["error"] = RESUME_NOTE
+            return _json_result(view)
         state = battleship_new_game(game_id=game_id)
         return _json_result(_battleship_view(state, "agent"))
 
     @mcp.tool()
-    def battleship_get_state(game_id: str = "harbor", player: str = "agent") -> str:
+    def battleship_get_state(game_id: str = TABLE_BATTLESHIP, player: str = "agent") -> str:
         """Return one player's redacted battleship view (own fleet + own shot results).
 
         Args:
-            game_id: Stable game identifier, shared with your opponent.
+            game_id: Which table to play at; the default is the room's.
             player: Whose private view to load. Only ask for your own — if you
                 are the side holding the 'human' seat, that means
                 player='human'.
@@ -2179,11 +2258,11 @@ def create_mcp_server() -> "FastMCP":
         return _json_result(battleship_get_view(game_id=game_id, player=player))
 
     @mcp.tool()
-    def battleship_fire_shot(game_id: str = "harbor", player: str = "agent", coordinate: str = "A1") -> str:
+    def battleship_fire_shot(game_id: str = TABLE_BATTLESHIP, player: str = "agent", coordinate: str = "A1") -> str:
         """Fire one shot at the enemy grid (A-J columns, rows 1-10, like B7).
 
         Args:
-            game_id: Stable game identifier, shared with your opponent.
+            game_id: Which table to play at; the default is the room's.
             player: Your own seat, human or agent. The 'human' seat fires
                 first, so in an AI-vs-AI game one side passes player='human'
                 throughout.
@@ -2192,11 +2271,11 @@ def create_mcp_server() -> "FastMCP":
         return _json_result(battleship_fire(game_id=game_id, player=player, coordinate=coordinate))
 
     @mcp.tool()
-    def battleship_shuffle_fleet(game_id: str = "harbor", player: str = "agent") -> str:
+    def battleship_shuffle_fleet(game_id: str = TABLE_BATTLESHIP, player: str = "agent") -> str:
         """Re-randomize your own fleet placement, allowed only before the first shot.
 
         Args:
-            game_id: Stable game identifier, shared with your opponent.
+            game_id: Which table to play at; the default is the room's.
             player: Your own seat, human or agent.
         """
         return _json_result(battleship_shuffle(game_id=game_id, player=player))
@@ -2219,7 +2298,7 @@ def create_mcp_server() -> "FastMCP":
 
     @mcp.tool()
     def checkers_submit_move(
-        game_id: str = "hearth",
+        game_id: str = TABLE_CHECKERS,
         player: str = "human",
         from_square: int = 1,
         to_square: int = 1,

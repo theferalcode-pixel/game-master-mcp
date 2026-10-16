@@ -440,6 +440,7 @@ button.bs-cell:not(:disabled):hover, button.bs-cell:not(:disabled):focus-visible
 .bs-cell.own.ship { background: rgba(159, 214, 224, .35); box-shadow: inset 0 0 0 1px rgba(159, 214, 224, .5); }
 .bs-cell.own.ship-hit { background: rgba(196, 80, 29, .6); }
 .bs-sunk { color: var(--muted); font-size: .82rem; margin: 0; }
+.bs-tally { color: var(--muted); font-size: .78rem; margin: 0; letter-spacing: .01em; }
 
 /* ── House records (lobby ledger) ────────────────────────────────────── */
 .records-card {

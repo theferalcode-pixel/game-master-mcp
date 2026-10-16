@@ -165,15 +165,16 @@ def _battleship_action(game_id: str, payload: dict) -> dict:
     return {"state": "error", "label": "Action must be 'new', 'fire', or 'shuffle'."}
 
 
-# Each browser game plays at its own dedicated game-master table so games
-# played purely in conversation are never disturbed.
+# The room's tables are the game master's default tables, so a person can open
+# a board here, say "your turn" to their AI, and both end up at the same game
+# without anyone naming a table.
 WEB_GAMES = {
-    "tic-tac-toe": {"game_id": "room-tictactoe", "load": game_master.load_game, "act": _tictactoe_action},
-    "connect-four": {"game_id": "room-connect4", "load": game_master.connect4_load_game, "act": _connect4_action},
-    "checkers": {"game_id": "room-checkers", "load": game_master.checkers_load_game, "act": _checkers_action},
-    "backgammon": {"game_id": "room-backgammon", "load": game_master.backgammon_load_game, "act": _backgammon_action},
-    "chess": {"game_id": "room-chess", "load": game_master.chess_load_game, "act": _chess_action},
-    "battleship": {"game_id": "room-battleship", "load": _battleship_load, "act": _battleship_action},
+    "tic-tac-toe": {"game_id": game_master.TABLE_TICTACTOE, "load": game_master.load_game, "act": _tictactoe_action},
+    "connect-four": {"game_id": game_master.TABLE_CONNECT4, "load": game_master.connect4_load_game, "act": _connect4_action},
+    "checkers": {"game_id": game_master.TABLE_CHECKERS, "load": game_master.checkers_load_game, "act": _checkers_action},
+    "backgammon": {"game_id": game_master.TABLE_BACKGAMMON, "load": game_master.backgammon_load_game, "act": _backgammon_action},
+    "chess": {"game_id": game_master.TABLE_CHESS, "load": game_master.chess_load_game, "act": _chess_action},
+    "battleship": {"game_id": game_master.TABLE_BATTLESHIP, "load": _battleship_load, "act": _battleship_action},
 }
 
 

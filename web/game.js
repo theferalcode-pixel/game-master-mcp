@@ -263,6 +263,9 @@ const GAMES = {
       };
 
       wrap.append(grid(state.target_board, true), grid(state.your_board, false));
+      // With no shared board, this line is the only way to see that {{A}} is at
+      // the same table as you: their shot count rises when they take a turn.
+      wrap.append(el('p', 'bs-tally', fill(`Table ${state.game_id} — shots fired: you ${state.shots_fired}, {{A}} ${state.opponent_shots_fired}.`)));
       if (state.enemy_ships_sunk?.length) {
         const sunkNote = state.enemy_ships_sunk.map((s) => `${s.name} (${s.size})`).join(', ');
         wrap.append(el('p', 'bs-sunk', `Sunk: ${sunkNote}`));

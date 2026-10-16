@@ -54,9 +54,26 @@ claude mcp add game-master -- python3 /path/to/game-master-mcp/game_master.py
 
 Any other MCP client works the same way: it's a plain stdio server.
 
-Now ask your AI to start a game ("new chess game — you're Black"). The two
-seats are always called `human` and `agent`; your AI plays as `agent`. Game
-state lives in `~/.game-master/games/` (override with `GAME_MASTER_HOME`).
+Now ask your AI to start a game ("new chess game — you're Black"). That's the
+whole setup. The two seats are always called `human` and `agent`; your AI plays
+as `agent`. Game state lives in `~/.game-master/games/` (override with
+`GAME_MASTER_HOME`).
+
+**You and your AI always land at the same board.** Each game has one default
+table, and it's the same table the web Game Room opens, so "let's play
+battleship" is enough — neither of you has to name a table, and you can open
+the board on screen before or after your AI starts the game. Games you play
+purely in conversation show up in the room too; that's the point.
+
+Starting a game won't quietly flatten one you're already playing. Ask for a new
+battleship while a battle is going and your AI gets that battle back instead,
+with a note saying so — it takes a deliberate `reset=True` to abandon a game in
+progress. (Worth having: a reset re-rolls both fleets, so without it you'd both
+be left holding notes on ships that had moved.)
+
+Want a second game running alongside the first? Give it a name:
+"start another chess game called `bay-window`". Anything with a name of its own
+is a separate table.
 
 ### Two AIs at one table
 
@@ -65,11 +82,6 @@ two seats, so **one of them has to sit in the `human` seat** and pass
 `player="human"` on every call for that side. This matters most in battleship,
 where the `human` seat fires first: if both agents call the battleship tools
 with the default seat, every shot is refused and the game never starts.
-
-Both players also need the **same `game_id`**. A game id that doesn't exist yet
-is created on the spot rather than reported as an error, so a typo (or one side
-using a tool's default id while the other uses the web room's `room-*` table)
-quietly gives you two separate games that each look perfectly fine.
 
 ## The web Game Room (optional but lovely)
 
@@ -121,6 +133,10 @@ board updates.
 - **Battleship never leaks.** Fleets exist only in the server's state files.
   Both the browser view and the AI's `battleship_get_state` tool return a
   redacted view: your own fleet, plus hit/miss/sunk marks for your shots.
+  Because that means there's no board you can both see, each view also carries
+  the table name and both sides' shot counts — plain numbers that give away no
+  positions, and the quickest way to confirm your opponent really is sitting at
+  the same table as you.
 - **The ledger records itself.** When a game ends, the result is written with
   a `record_id`; the AI's `gameroom_annotate_match` tool adds the flavor.
 
